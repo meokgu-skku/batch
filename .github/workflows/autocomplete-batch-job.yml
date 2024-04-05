@@ -31,5 +31,5 @@ jobs:
             docker login -u ${{ secrets.USERNAME }} -p ${{ secrets.PASSWORD }}
             docker pull sinkyoungdeok/skku-autocomplete-batch
 
-            docker run --net ubuntu_default skku-autocomplete-batch
+            docker run --net ubuntu_default sinkyoungdeok/skku-autocomplete-batch
         
