@@ -102,9 +102,8 @@ for org_data in restaurant_names:
 
     for gd, gdc in generated_data:
       json_data = {
-        'ord_display': org_data,
+        'org_display': org_data,
         'highlighted_display': apply_highlighting(org_data, gdc),
-        'data_type': 'query',
       }
       if gd in data:
         if json_data not in data[gd]:
@@ -114,7 +113,7 @@ for org_data in restaurant_names:
 
 r = redis.Redis(host='localhost', port=6379, db=0)
 version = '20240403232030'
-r.set('restaurant:v4:version', version)
+r.set('restaurant:v1:version', version)
 
 for key, value in data.items():
-  r.set('restaurant:v4:' + version + ':' + key, json.dumps(value))
+  r.set('restaurant:v1:' + version + ':' + key, json.dumps(value))
