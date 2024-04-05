@@ -102,7 +102,7 @@ for org_data in restaurant_names:
 
     for gd, gdc in generated_data:
       json_data = {
-        'ord_display': org_data,
+        'org_display': org_data,
         'highlighted_display': apply_highlighting(org_data, gdc),
         'data_type': 'query',
       }
