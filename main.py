@@ -114,7 +114,7 @@ for org_data in restaurant_names:
 
 r = redis.Redis(host='localhost', port=6379, db=0)
 version = '20240403232030'
-r.set('restaurant:v4:version', version)
+r.set('restaurant:v1:version', version)
 
 for key, value in data.items():
-  r.set('restaurant:v4:' + version + ':' + key, json.dumps(value))
+  r.set('restaurant:v1:' + version + ':' + key, json.dumps(value))
