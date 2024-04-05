@@ -104,7 +104,6 @@ for org_data in restaurant_names:
       json_data = {
         'org_display': org_data,
         'highlighted_display': apply_highlighting(org_data, gdc),
-        'data_type': 'query',
       }
       if gd in data:
         if json_data not in data[gd]:
