@@ -1,0 +1,34 @@
+name: Autocomplete Batch Job
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: '0 0 * * *'
+
+jobs:
+  batch-job:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Docker Build And Push
+        run: |
+          docker login -u ${{ secrets.USERNAME }} -p ${{ secrets.PASSWORD }}
+          docker build -t skku-autocomplete-batch .
+          docker tag skku-autocomplete-batch sinkyoungdeok/skku-autocomplete-batch
+          docker push sinkyoungdeok/skku-autocomplete-batch
+      - name: Deploy Prod
+        uses: appleboy/ssh-action@v0.1.4
+        with:
+          key: ${{ secrets.SSH_KEY }}
+          host: ${{ secrets.HOST_NAME }}
+          username: ubuntu
+          port: 22
+          script: |
+            docker login -u ${{ secrets.USERNAME }} -p ${{ secrets.PASSWORD }}
+            docker pull sinkyoungdeok/skku-autocomplete-batch
+
+            docker run --net ubuntu_default skku-autocomplete-batch
+        

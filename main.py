@@ -111,9 +111,9 @@ for org_data in restaurant_names:
       else:
         data[gd] = [json_data]
 
-r = redis.Redis(host='localhost', port=6379, db=0)
+r = redis.Redis(host='skku-redis', port=6379, db=0)
 version = '20240403232030'
-r.set('restaurant:v1:version', version)
+r.setex('restaurant:v1:version', 3600 * 24 * 2, version)
 
 for key, value in data.items():
-  r.set('restaurant:v1:' + version + ':' + key, json.dumps(value))
+  r.setex('restaurant:v1:' + version + ':' + key, 3600 * 24 * 2, json.dumps(value))
