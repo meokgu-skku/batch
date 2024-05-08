@@ -1,6 +1,6 @@
 FROM python:3.8-slim
 
-COPY requirements.txt requirements.txt
+COPY es-requirements.txt es-requirements.txt
 COPY restaurants.csv restaurants.csv
 COPY csv-to-es.py csv-to-es.py
 
