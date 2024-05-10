@@ -88,11 +88,20 @@ def apply_highlighting(org_data, highlighted_data):
 
 
 file_path = 'restaurants.csv'
+menu_file_path = 'menus.csv'
+
 df = pd.read_csv(file_path)
+menu_df = pd.read_csv(menu_file_path)
 
 restaurant_names = df['name'].tolist()
+restaurant_categories = df['category'].tolist()
+restaurant_custom_categories = list(set(df['custom_category'].tolist()))
+menu_names = menu_df['menu_name'].tolist()
 data = {}
 
+print("Generating autocomplete data...")
+
+print("Generating autocomplete data for restaurant names...", len(restaurant_names))
 for org_data in restaurant_names:
   candidates = [org_data]
   candidates.extend(org_data.split())
@@ -104,6 +113,69 @@ for org_data in restaurant_names:
       json_data = {
         'org_display': org_data,
         'highlighted_display': apply_highlighting(org_data, gdc),
+        'category': '가게 이름',
+      }
+      if gd in data:
+        if json_data not in data[gd]:
+          data[gd].append(json_data)
+      else:
+        data[gd] = [json_data]
+
+print("Generating autocomplete data for restaurant categories...", len(restaurant_categories))
+for org_data in restaurant_categories:
+  candidates = [org_data]
+  candidates.extend(org_data.split())
+  candidates.append(org_data.replace(" ", ""))
+  for candidate in candidates:
+    generated_data = generate_autocomplete_data(candidate)
+
+    for gd, gdc in generated_data:
+      json_data = {
+        'org_display': org_data,
+        'highlighted_display': apply_highlighting(org_data, gdc),
+        'category': '(소)카테고리',
+      }
+      if gd in data:
+        if json_data not in data[gd]:
+          data[gd].append(json_data)
+      else:
+        data[gd] = [json_data]
+
+print("Generating autocomplete data for restaurant custom categories...", len(restaurant_custom_categories))
+for org_data in restaurant_custom_categories:
+  candidates = [org_data]
+  candidates.extend(org_data.split())
+  candidates.append(org_data.replace(" ", ""))
+  for candidate in candidates:
+    generated_data = generate_autocomplete_data(candidate)
+
+    for gd, gdc in generated_data:
+      json_data = {
+        'org_display': org_data,
+        'highlighted_display': apply_highlighting(org_data, gdc),
+        'category': '(대)카테고리',
+      }
+      if gd in data:
+        if json_data not in data[gd]:
+          data[gd].append(json_data)
+      else:
+        data[gd] = [json_data]
+
+print("Generating autocomplete data for menu names...", len(menu_names))
+for i, org_data in enumerate(menu_names):
+  if i % 100 == 0:
+    print("Generating autocomplete data for menu names...", i, "/", len(menu_names))
+  candidates = [org_data]
+  candidates.extend(org_data.split())
+  candidates.append(org_data.replace(" ", ""))
+  for candidate in candidates:
+    generated_data = generate_autocomplete_data(candidate)
+
+    for gd, gdc in generated_data:
+      json_data = {
+        'org_display': org_data,
+        'highlighted_display': apply_highlighting(org_data, gdc),
+        'category': '메뉴 이름',
       }
       if gd in data:
         if json_data not in data[gd]:
@@ -115,5 +187,8 @@ r = redis.Redis(host='skku-redis', port=6379, db=0)
 version = '20240403232030'
 r.setex('restaurant:v1:version', 3600 * 24 * 2, version)
 
+print("Saving autocomplete data to Redis...")
 for key, value in data.items():
   r.setex('restaurant:v1:' + version + ':' + key, 3600 * 24 * 2, json.dumps(value))
+
+print("Autocomplete data generation completed.")
