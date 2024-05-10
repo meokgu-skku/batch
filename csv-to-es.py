@@ -3,8 +3,8 @@ import datetime
 import pandas as pd
 from elasticsearch import Elasticsearch
 
-file_path = 'restaurants.csv'
-df = pd.read_csv(file_path)
+restaurant_df = pd.read_csv('restaurants.csv')
+menu_df = pd.read_csv('menus.csv')
 
 now = datetime.datetime.now()
 index_name = f"restaurant_{now.strftime('%Y_%m_%d_%H-%M')}"
@@ -18,14 +18,53 @@ if not es.indices.exists(index=index_name):
     "properties": {
       "name": {"type": "text"},
       "category": {"type": "text"},
+      "review_count": {"type": "text"},
+      "address": {"type": "text"},
+      "rating": {"type": "float"},
+      "number": {"type": "text"},
+      "image_url": {"type": "text"},
+      "custom_category": {"type": "text"},
+      "menus": {
+        "type": "nested",
+        "properties": {
+          "menu_name": {"type": "text"},
+          "price": {"type": "text"},
+          "description": {"type": "text"},
+          "is_representative": {"type": "text"},
+          "image_url": {"type": "text"}
+        }
+      }
     }
   })
 
 # 데이터 인덱싱
-for _, row in df.iterrows():
+for _, row in restaurant_df.iterrows():
+  menus = menu_df[menu_df['restaurant_id'] == row['id']].to_dict('records')
+
+  for menu in menus:
+    if pd.isna(menu['image_url']):
+      menu.pop('image_url')  # image_url 필드가 NaN이면 제거
+
+  if pd.isna(row['image_url']):
+    restaurant_image_url = None  # NaN 값을 None으로 설정
+  else:
+    restaurant_image_url = row['image_url']
+
+  if pd.notna(row['rating']):
+    rating = float(row['rating'])
+  else:
+    rating = None
+
   response = es.index(index=index_name, document={
     "name": row['name'],
     "category": row['category'],
+    "review_count": row['review_count'],
+    "address": row['address'],
+    "rating": rating,
+    "number": row['number'],
+    "image_url": restaurant_image_url,
+    "custom_category": row['custom_category'],
+    "menus": menus,
   })
   print(f"Indexed document ID: {response['_id']}, Result: {response['result']}")
 
