@@ -88,9 +88,15 @@ def apply_highlighting(org_data, highlighted_data):
 
 
 file_path = 'restaurants.csv'
+menu_file_path = 'menus.csv'
+
 df = pd.read_csv(file_path)
+menu_df = pd.read_csv(menu_file_path)
 
 restaurant_names = df['name'].tolist()
+restaurant_categories = df['category'].tolist()
+restaurant_custom_categories = df['custom_category'].toSet()
+menu_names = menu_df['name'].tolist()
 data = {}
 
 for org_data in restaurant_names:
@@ -104,6 +110,64 @@ for org_data in restaurant_names:
       json_data = {
         'org_display': org_data,
         'highlighted_display': apply_highlighting(org_data, gdc),
+        'category': '가게 이름',
+      }
+      if gd in data:
+        if json_data not in data[gd]:
+          data[gd].append(json_data)
+      else:
+        data[gd] = [json_data]
+
+for org_data in restaurant_categories:
+  candidates = [org_data]
+  candidates.extend(org_data.split())
+  candidates.append(org_data.replace(" ", ""))
+  for candidate in candidates:
+    generated_data = generate_autocomplete_data(candidate)
+
+    for gd, gdc in generated_data:
+      json_data = {
+        'org_display': org_data,
+        'highlighted_display': apply_highlighting(org_data, gdc),
+        'category': '(소)카테고리',
+      }
+      if gd in data:
+        if json_data not in data[gd]:
+          data[gd].append(json_data)
+      else:
+        data[gd] = [json_data]
+
+for org_data in restaurant_custom_categories:
+  candidates = [org_data]
+  candidates.extend(org_data.split())
+  candidates.append(org_data.replace(" ", ""))
+  for candidate in candidates:
+    generated_data = generate_autocomplete_data(candidate)
+
+    for gd, gdc in generated_data:
+      json_data = {
+        'org_display': org_data,
+        'highlighted_display': apply_highlighting(org_data, gdc),
+        'category': '(대)카테고리',
+      }
+      if gd in data:
+        if json_data not in data[gd]:
+          data[gd].append(json_data)
+      else:
+        data[gd] = [json_data]
+
+for org_data in menu_names:
+  candidates = [org_data]
+  candidates.extend(org_data.split())
+  candidates.append(org_data.replace(" ", ""))
+  for candidate in candidates:
+    generated_data = generate_autocomplete_data(candidate)
+
+    for gd, gdc in generated_data:
+      json_data = {
+        'org_display': org_data,
+        'highlighted_display': apply_highlighting(org_data, gdc),
+        'category': '메뉴 이름',
       }
       if gd in data:
         if json_data not in data[gd]:
