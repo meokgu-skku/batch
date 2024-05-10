@@ -14,24 +14,37 @@ es = Elasticsearch("http://es-singlenode:9200")
 
 # 새 인덱스 생성 및 매핑 설정
 if not es.indices.exists(index=index_name):
-  es.indices.create(index=index_name, mappings={
-    "properties": {
-      "name": {"type": "text"},
-      "category": {"type": "text"},
-      "review_count": {"type": "text"},
-      "address": {"type": "text"},
-      "rating": {"type": "float"},
-      "number": {"type": "text"},
-      "image_url": {"type": "text"},
-      "custom_category": {"type": "text"},
-      "menus": {
-        "type": "nested",
-        "properties": {
-          "menu_name": {"type": "text"},
-          "price": {"type": "text"},
-          "description": {"type": "text"},
-          "is_representative": {"type": "text"},
-          "image_url": {"type": "text"}
+  es.indices.create(index=index_name, body={
+    "settings": {
+      "analysis": {
+        "analyzer": {
+          "korean": {
+            "type": "custom",
+            "tokenizer": "nori_tokenizer",
+            "filter": ["nori_readingform"]
+          }
+        }
+      }
+    },
+    "mappings": {
+      "properties": {
+        "name": {"type": "text", "analyzer": "korean"},
+        "category": {"type": "text", "analyzer": "korean"},
+        "review_count": {"type": "text", "analyzer": "korean"},
+        "address": {"type": "text", "analyzer": "korean"},
+        "rating": {"type": "float"},
+        "number": {"type": "text"},
+        "image_url": {"type": "text"},
+        "custom_category": {"type": "text", "analyzer": "korean"},
+        "menus": {
+          "type": "nested",
+          "properties": {
+            "menu_name": {"type": "text", "analyzer": "korean"},
+            "price": {"type": "text"},
+            "description": {"type": "text", "analyzer": "korean"},
+            "is_representative": {"type": "text"},
+            "image_url": {"type": "text"}
+          }
         }
       }
     }
