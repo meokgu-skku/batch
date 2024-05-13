@@ -29,13 +29,13 @@ if not es.indices.exists(index=index_name):
     "mappings": {
       "properties": {
         "name": {"type": "text", "analyzer": "korean"},
-        "category": {"type": "text", "analyzer": "korean"},
+        "original_category": {"type": "text", "analyzer": "korean"},
         "naver_review_count": {"type": "text", "analyzer": "korean"},
         "address": {"type": "text", "analyzer": "korean"},
         "naver_rating": {"type": "float"},
         "number": {"type": "text"},
         "image_url": {"type": "text"},
-        "custom_category": {"type": "text", "analyzer": "korean"},
+        "category": {"type": "text", "analyzer": "korean"},
         "menus": {
           "type": "nested",
           "properties": {
@@ -79,13 +79,13 @@ for _, row in restaurant_df.iterrows():
   print(row['name'], row['category'], row['review_count'], row['address'], rating, number, restaurant_image_url, menus)
   response = es.index(index=index_name, id=row['name'], document={
     "name": row['name'],
-    "category": row['category'],
+    "original_category": row['category'],
     "naver_review_count": row['review_count'],
     "address": row['address'],
     "naver_rating": rating,
     "number": number,
     "image_url": restaurant_image_url,
-    "custom_category": row['custom_category'],
+    "category": row['custom_category'],
     "menus": menus,
   })
   print(f"Indexed document ID: {response['_id']}, Result: {response['result']}")
