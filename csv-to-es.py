@@ -10,7 +10,7 @@ now = datetime.datetime.now()
 index_name = f"restaurant_{now.strftime('%Y_%m_%d_%H-%M')}"
 
 # Elasticsearch 클라이언트 설정
-es = Elasticsearch("http://es-singlenode:9200")
+es = Elasticsearch("http://localhost:9200")
 
 # 새 인덱스 생성 및 매핑 설정
 if not es.indices.exists(index=index_name):
@@ -40,7 +40,7 @@ if not es.indices.exists(index=index_name):
           "type": "nested",
           "properties": {
             "menu_name": {"type": "text", "analyzer": "korean"},
-            "price": {"type": "text"},
+            "price": {"type": "integer"},
             "description": {"type": "text", "analyzer": "korean"},
             "is_representative": {"type": "text"},
             "image_url": {"type": "text"}
@@ -58,6 +58,9 @@ for _, row in restaurant_df.iterrows():
     if pd.isna(menu['image_url']):
       menu.pop('image_url')  # image_url 필드가 NaN이면 제거
 
+    menu['price'] = int(menu['price'].replace(',', ''))  # 가격에서 쉼표 제거 및 정수 변환
+    menu['is_representative'] = menu['is_representative'] == '대표'  # 대표 여부를 Boolean 값으로 변환
+
   if pd.isna(row['image_url']):
     restaurant_image_url = None  # NaN 값을 None으로 설정
   else:
@@ -66,15 +69,21 @@ for _, row in restaurant_df.iterrows():
   if pd.notna(row['rating']):
     rating = float(row['rating'])
   else:
-    rating = None
+    rating = 0.0
 
-  response = es.index(index=index_name, document={
+  if pd.notna(row['number']):
+    number = row['number']
+  else:
+    number = ''
+
+  print(row['name'], row['category'], row['review_count'], row['address'], rating, number, restaurant_image_url, menus)
+  response = es.index(index=index_name, id=row['name'], document={
     "name": row['name'],
     "category": row['category'],
     "review_count": row['review_count'],
     "address": row['address'],
     "rating": rating,
-    "number": row['number'],
+    "number": number,
     "image_url": restaurant_image_url,
     "custom_category": row['custom_category'],
     "menus": menus,
