@@ -69,12 +69,12 @@ for _, row in restaurant_df.iterrows():
   if pd.notna(row['rating']):
     rating = float(row['rating'])
   else:
-    rating = 0.0
+    rating = None
 
   if pd.notna(row['number']):
     number = row['number']
   else:
-    number = ''
+    number = None
 
   print(row['name'], row['category'], row['review_count'], row['address'], rating, number, restaurant_image_url, menus)
   response = es.index(index=index_name, id=row['name'], document={
