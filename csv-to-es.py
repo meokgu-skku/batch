@@ -30,9 +30,9 @@ if not es.indices.exists(index=index_name):
       "properties": {
         "name": {"type": "text", "analyzer": "korean"},
         "category": {"type": "text", "analyzer": "korean"},
-        "review_count": {"type": "text", "analyzer": "korean"},
+        "naver_review_count": {"type": "text", "analyzer": "korean"},
         "address": {"type": "text", "analyzer": "korean"},
-        "rating": {"type": "float"},
+        "naver_rating": {"type": "float"},
         "number": {"type": "text"},
         "image_url": {"type": "text"},
         "custom_category": {"type": "text", "analyzer": "korean"},
@@ -80,9 +80,9 @@ for _, row in restaurant_df.iterrows():
   response = es.index(index=index_name, id=row['name'], document={
     "name": row['name'],
     "category": row['category'],
-    "review_count": row['review_count'],
+    "naver_review_count": row['review_count'],
     "address": row['address'],
-    "rating": rating,
+    "naver_rating": rating,
     "number": number,
     "image_url": restaurant_image_url,
     "custom_category": row['custom_category'],
