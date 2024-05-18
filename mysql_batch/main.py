@@ -1,7 +1,7 @@
 import pymysql
 import csv
 from create_table import create_table
-from insert import insert_into_restaurants
+from insert import *
 
 # connect to MySQL server
 conn = pymysql.connect(
@@ -21,10 +21,11 @@ conn.commit()
 
 # table insert query
 # restaurants insert
-with open('restaurants.csv', mode ='r')as file:
+with open('../restaurants.csv', mode ='r')as file:
     csv_dict = csv.DictReader(file)
     for restaurant in csv_dict:
         insert_into_restaurants(cursor, restaurant)
+        upsert_into_categories(cursor, restaurant)
 
 conn.commit()
 
