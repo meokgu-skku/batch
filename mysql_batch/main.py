@@ -19,18 +19,31 @@ create_table(cursor)
 conn.commit()
 
 
-# table insert query
-# restaurants insert
+# Insert restaurants, categories 
 with open('../restaurants.csv', mode ='r')as file:
     csv_dict = csv.DictReader(file)
     for restaurant in csv_dict:
         insert_into_restaurants(cursor, restaurant)
-        upsert_into_categories(cursor, restaurant)
+        insert_into_categories(cursor, restaurant)
 
 conn.commit()
 
+# Insert operating_infos
+with open('../operations.csv', mode ='r')as file:
+    csv_dict = csv.DictReader(file)
+    for operation in csv_dict:
+        insert_into_operating_infos(cursor, operation)
+        
 
-# restaurant_likes insert
+conn.commit()
+
+# Insert menus
+with open('../menus.csv', mode ='r')as file:
+    csv_dict = csv.DictReader(file)
+    for menu in csv_dict:
+        insert_into_menus(cursor, menu)
+
+conn.commit()
 
 
 # close the connection

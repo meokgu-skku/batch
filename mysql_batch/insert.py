@@ -41,14 +41,51 @@ def insert_into_restaurants(cursor, restaurant):
     ))
 
 
-def upsert_into_categories(cursor, restaurant):
+def insert_into_categories(cursor, restaurant):
     
-    upsert_query = """
+    insert_query = """
         INSERT IGNORE INTO categories (restaurant_id, name)
         VALUES (%s, %s);
         """
     
-    cursor.execute(upsert_query, (
+    cursor.execute(insert_query, (
       restaurant['id'],
       restaurant['custom_category']
     ))
+
+def insert_into_operating_infos(cursor, operation):
+    
+    insert_query = """
+        INSERT IGNORE INTO operating_infos (restaurant_id, day, info)
+        VALUES (%s, %s, %s);
+        """
+    
+    cursor.execute(insert_query, (
+      operation['restaurant_id'],
+      operation['day'],
+      operation['info']
+    ))
+
+def insert_into_menus(cursor, menu):
+    
+    insert_query = """
+        INSERT IGNORE INTO menus (
+          restaurant_id, 
+          menu_name,
+          price,
+          description,
+          is_representative,
+          image_url
+        )
+        VALUES (%s, %s, %s, %s, %s, %s);
+        """
+    
+    cursor.execute(insert_query, (
+      menu['restaurant_id'],
+      menu['menu_name'],
+      menu['price'],
+      menu['description'],
+      menu['is_representative'],
+      menu['image_url']
+    ))
+
