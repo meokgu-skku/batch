@@ -29,7 +29,7 @@ def insert_into_restaurants(cursor, restaurant):
     cursor.execute(insert_query, (
       restaurant['id'],
       restaurant['name'], 
-      restaurant['custom_category'], 
+      restaurant['category'],
       0, 
       0, 
       restaurant['address'], 
