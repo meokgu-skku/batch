@@ -71,7 +71,7 @@ def insert_into_menus(cursor, menu):
     insert_query = """
         INSERT IGNORE INTO menus (
           restaurant_id, 
-          menu_name,
+          name,
           price,
           description,
           is_representative,
