@@ -1,12 +1,9 @@
-import pymysql 
-
 def insert_into_restaurants(cursor, restaurant):
-    
-    insert_query = """
+  insert_query = """
     INSERT INTO `restaurants` (
       `id`,
       `name`, 
-      `category_detail`, 
+      `original_categories`, 
       `review_count`, 
       `like_count`, 
       `address`, 
@@ -20,55 +17,66 @@ def insert_into_restaurants(cursor, restaurant):
       %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
     );
     """
-    
-    try:
-        rating = float(restaurant['rating'])
-    except ValueError:
-        rating = 0.0
 
-    cursor.execute(insert_query, (
-      restaurant['id'],
-      restaurant['name'], 
-      restaurant['category'],
-      0, 
-      0, 
-      restaurant['address'], 
-      restaurant['number'], 
-      rating , 
-      restaurant['image_url'], 
-      0,
-      0
-    ))
+  try:
+    rating = float(restaurant['rating'])
+  except ValueError:
+    rating = 0.0
+
+  cursor.execute(insert_query, (
+    restaurant['id'],
+    restaurant['name'],
+    restaurant['category'],
+    0,
+    0,
+    restaurant['address'],
+    restaurant['number'],
+    rating,
+    restaurant['image_url'],
+    0,
+    restaurant['discount_content']
+  ))
 
 
-def insert_into_categories(cursor, restaurant):
-    
-    insert_query = """
-        INSERT IGNORE INTO categories (restaurant_id, name)
+def insert_into_categories(cursor, id, name):
+  insert_query = """
+        INSERT IGNORE INTO categories (id, name)
         VALUES (%s, %s);
         """
-    
-    cursor.execute(insert_query, (
-      restaurant['id'],
-      restaurant['custom_category']
-    ))
+
+  cursor.execute(insert_query, (
+    id,
+    name
+  ))
+
+
+def insert_into_restaurant_categories(cursor, restaurant_id, category_id):
+  insert_query = """
+          INSERT IGNORE INTO restaurant_categories (restaurant_id, category_id)
+          VALUES (%s, %s);
+          """
+
+  cursor.execute(insert_query, (
+    restaurant_id,
+    category_id
+  ))
+
 
 def insert_into_operating_infos(cursor, operation):
-    
-    insert_query = """
+  insert_query = """
         INSERT IGNORE INTO operating_infos (restaurant_id, day, info)
         VALUES (%s, %s, %s);
         """
-    
-    cursor.execute(insert_query, (
-      operation['restaurant_id'],
-      operation['day'],
-      operation['info']
-    ))
+
+  cursor.execute(insert_query, (
+    operation['restaurant_id'],
+    operation['day'],
+    operation['info']
+  ))
+
 
 def insert_into_menus(cursor, menu):
-    
-    insert_query = """
+  insert_query = """
         INSERT IGNORE INTO menus (
           restaurant_id, 
           name,
@@ -79,13 +87,12 @@ def insert_into_menus(cursor, menu):
         )
         VALUES (%s, %s, %s, %s, %s, %s);
         """
-    
-    cursor.execute(insert_query, (
-      menu['restaurant_id'],
-      menu['menu_name'],
-      menu['price'],
-      menu['description'],
-      menu['is_representative'],
-      menu['image_url']
-    ))
 
+  cursor.execute(insert_query, (
+    menu['restaurant_id'],
+    menu['menu_name'],
+    int(menu['price'].replace(',', '')),
+    menu['description'] if menu['description'] != "설명 없음" else "",
+    1 if menu['is_representative'] == '대표' else 0,
+    menu['image_url']
+  ))
