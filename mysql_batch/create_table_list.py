@@ -1,8 +1,8 @@
 create_table_restaurants = """
-    CREATE TABLE `restaurants` (
+    CREATE TABLE IF NOT EXISTS `restaurants` (
     `id` BIGINT NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(64) NOT NULL,
-    `category_detail` VARCHAR(64) NOT NULL,
+    `original_categories` VARCHAR(64) NOT NULL,
     `review_count` INT NOT NULL DEFAULT 0,
     `like_count` INT NOT NULL DEFAULT 0,
     `address` VARCHAR(256),
@@ -15,7 +15,7 @@ create_table_restaurants = """
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
     """
 
-create_table_restaurant_likes ="""
+create_table_restaurant_likes = """
     CREATE TABLE IF NOT EXISTS `restaurant_likes` (
         `id` BIGINT NOT NULL AUTO_INCREMENT,
         `restaurant_id` BIGINT NOT NULL,
@@ -23,37 +23,42 @@ create_table_restaurant_likes ="""
         PRIMARY KEY (`id`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
     """
-create_table_categories ="""
+create_table_categories = """
     CREATE TABLE IF NOT EXISTS `categories` (
         `id` BIGINT NOT NULL AUTO_INCREMENT,
-        `restaurant_id` BIGINT NOT NULL,
         `name` VARCHAR(255) NOT NULL,
-        PRIMARY KEY (`id`),
-        UNIQUE KEY unique_restaurant_name (restaurant_id, name)
+        PRIMARY KEY (`id`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
     """
 
-create_table_operating_infos ="""
+create_table_restaurant_categories = """
+    CREATE TABLE IF NOT EXISTS `restaurant_categories` (
+        `id` BIGINT NOT NULL AUTO_INCREMENT,
+        `restaurant_id` BIGINT NOT NULL,
+        `category_id` BIGINT NOT NULL,
+        PRIMARY KEY (`id`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+    """
+
+create_table_operating_infos = """
     CREATE TABLE IF NOT EXISTS `operating_infos` (
         `id` BIGINT NOT NULL AUTO_INCREMENT,
         `restaurant_id` BIGINT NOT NULL,
         `day` VARCHAR(255) NOT NULL,
         `info` VARCHAR(255) NOT NULL,
-        PRIMARY KEY (`id`),
-        UNIQUE KEY unique_restaurant_name (restaurant_id, day)
+        PRIMARY KEY (`id`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
     """
 
-create_table_menus ="""
+create_table_menus = """
     CREATE TABLE IF NOT EXISTS `menus` (
         `id` BIGINT NOT NULL AUTO_INCREMENT,
         `restaurant_id` BIGINT NOT NULL,
         `name` VARCHAR(255) NOT NULL,
-        `price` VARCHAR(32) NOT NULL,
+        `price` INT NOT NULL,
         `description` VARCHAR(512) NOT NULL,
-        `is_representative` VARCHAR(32) NOT NULL,
+        `is_representative` TINYINT(1) NOT NULL,
         `image_url` VARCHAR(512) NOT NULL,
-        PRIMARY KEY (`id`),
-        UNIQUE KEY unique_restaurant_name (restaurant_id, menu_name)
+        PRIMARY KEY (`id`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
     """
