@@ -1,7 +1,6 @@
 import mysql.connector
 from elasticsearch import Elasticsearch, helpers
 
-# MySQL database connection parameters
 db_config = {
   'user': 'skku-user',
   'password': 'skku-pw',
@@ -10,7 +9,6 @@ db_config = {
   'port': 3306
 }
 
-# Elasticsearch connection parameters
 es = Elasticsearch(['http://es-singlenode:9200'])
 
 
