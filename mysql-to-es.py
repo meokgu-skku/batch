@@ -11,7 +11,7 @@ db_config = {
 }
 
 # Elasticsearch connection parameters
-es = Elasticsearch(['http://localhost:9200'])
+es = Elasticsearch(['http://es-singlenode:9200'])
 
 
 def fetch_restaurant_data():
