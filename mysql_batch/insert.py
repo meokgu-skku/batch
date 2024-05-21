@@ -18,11 +18,6 @@ def insert_into_restaurants(cursor, restaurant):
     );
     """
 
-  try:
-    rating = float(restaurant['rating'])
-  except ValueError:
-    rating = 0.0
-
   cursor.execute(insert_query, (
     restaurant['id'],
     restaurant['name'],
@@ -31,7 +26,7 @@ def insert_into_restaurants(cursor, restaurant):
     0,
     restaurant['address'],
     restaurant['number'],
-    rating,
+    0,
     restaurant['image_url'],
     0,
     restaurant['discount_content']

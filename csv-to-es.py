@@ -10,7 +10,7 @@ now = datetime.datetime.now()
 index_name = f"restaurant_{now.strftime('%Y_%m_%d_%H-%M')}"
 
 # Elasticsearch 클라이언트 설정
-es = Elasticsearch("http://es-singlenode:9200")
+es = Elasticsearch("http://localhost:9200")
 
 # 새 인덱스 생성 및 매핑 설정
 if not es.indices.exists(index=index_name):
@@ -31,9 +31,12 @@ if not es.indices.exists(index=index_name):
                 "id": {"type": "long"},
                 "name": {"type": "text", "analyzer": "korean"},
                 "original_category": {"type": "text", "analyzer": "korean"},
-                "naver_review_count": {"type": "long"},
                 "address": {"type": "text", "analyzer": "korean"},
-                "naver_rating": {"type": "float"},
+                "naver_review_count": {"type": "long"},
+                "naver_rating_avg": {"type": "float"},
+                "review_count": {"type": "long"},
+                "rating_avg": {"type": "float"},
+                "like_count": {"type": "long"},
                 "number": {"type": "text"},
                 "image_url": {"type": "text"},
                 "category": {"type": "text", "analyzer": "korean"},
@@ -91,7 +94,7 @@ for _, row in restaurant_df.iterrows():
         "original_category": row['category'],
         "naver_review_count": row['review_count'].replace('+', ''),
         "address": row['address'],
-        "naver_rating": rating,
+        "naver_rating_avg": rating,
         "number": number,
         "image_url": restaurant_image_url,
         "category": row['custom_category'],
@@ -102,14 +105,14 @@ for _, row in restaurant_df.iterrows():
         data.pop("discount_content")
     if data.get("naver_review_count") is None:
         data.pop("naver_review_count")
-    if data.get("naver_rating") is None:
-        data.pop("naver_rating")
+    if data.get("naver_rating_avg") is None:
+        data.pop("naver_rating_avg")
     if data.get("number") is None:
         data.pop("number")
     if data.get("image_url") is None:
         data.pop("image_url")
 
-    response = es.index(index=index_name, id=row['name'], document=data)
+    response = es.index(index=index_name, id=row['id'], document=data)
     print(f"Indexed document ID: {response['_id']}, Result: {response['result']}")
 
 # 앨리어스 확인 및 설정
