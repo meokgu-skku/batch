@@ -6,7 +6,7 @@ def insert_into_restaurants(cursor, restaurant):
     INSERT INTO `restaurants` (
       `id`,
       `name`, 
-      `category_detail`, 
+      `original_categories`, 
       `review_count`, 
       `like_count`, 
       `address`, 
@@ -80,12 +80,13 @@ def insert_into_menus(cursor, menu):
         VALUES (%s, %s, %s, %s, %s, %s);
         """
     
+
     cursor.execute(insert_query, (
       menu['restaurant_id'],
       menu['menu_name'],
-      menu['price'],
+      int(menu['price'].replace(",","")),
       menu['description'],
-      menu['is_representative'],
+      (menu['is_representative']=="대표"),
       menu['image_url']
     ))
 
