@@ -20,6 +20,7 @@ def insert_into_restaurants(cursor, restaurant):
       %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
     );
     """
+
     
     try:
         rating = float(restaurant['rating'])
@@ -80,7 +81,6 @@ def insert_into_menus(cursor, menu):
         VALUES (%s, %s, %s, %s, %s, %s);
         """
     
-
     cursor.execute(insert_query, (
       menu['restaurant_id'],
       menu['menu_name'],
@@ -89,4 +89,3 @@ def insert_into_menus(cursor, menu):
       (menu['is_representative']=="대표"),
       menu['image_url']
     ))
-

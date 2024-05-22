@@ -1,5 +1,5 @@
 create_table_restaurants = """
-    CREATE TABLE `restaurants` (
+    CREATE TABLE IF NOT EXISTS `restaurants` (
     `id` BIGINT NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(64) NOT NULL,
     `original_categories` VARCHAR(64) NOT NULL,
