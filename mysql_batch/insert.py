@@ -11,10 +11,12 @@ def insert_into_restaurants(cursor, restaurant):
       `rating_avg`, 
       `representative_image_url`, 
       `view_count`,
-      `discount_content`
+      `discount_content`,
+      `longitude`,
+      `latitude`
     ) 
     VALUES (
-      %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
+      %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
     );
     """
 
@@ -29,7 +31,9 @@ def insert_into_restaurants(cursor, restaurant):
     0,
     restaurant['image_url'],
     0,
-    restaurant['discount_content']
+    restaurant['discount_content'],
+    restaurant['longitude'],
+    restaurant['latitude']
   ))
 
 

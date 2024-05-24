@@ -41,6 +41,8 @@ if not es.indices.exists(index=index_name):
                 "image_url": {"type": "text"},
                 "category": {"type": "text", "analyzer": "korean"},
                 "discount_content": {"type": "text", "analyzer": "korean"},
+                "longitude": {"type": "float"},
+                "latitude": {"type": "float"},
                 "menus": {
                     "type": "nested",
                     "properties": {
@@ -86,8 +88,18 @@ for _, row in restaurant_df.iterrows():
     else:
         discount_content = None
 
+    if pd.notna(row['longitude']):
+        longitude = float(row['longitude'])
+    else:
+        longitude = None
+
+    if pd.notna(row['latitude']):
+        latitude = float(row['latitude'])
+    else:
+        latitude = None
+
     print(row['name'], row['category'], row['review_count'], row['address'], rating, number, restaurant_image_url,
-          menus)
+          menus, longitude, latitude)
     data = {
         "id": row['id'],
         "name": row['name'],
@@ -99,6 +111,8 @@ for _, row in restaurant_df.iterrows():
         "image_url": restaurant_image_url,
         "category": row['custom_category'],
         "discount_content": discount_content,
+        "longitude": longitude,
+        "latitude": latitude,
         "menus": menus,
     }
     if data.get("discount_content") is None:
