@@ -41,8 +41,7 @@ if not es.indices.exists(index=index_name):
                 "image_url": {"type": "text"},
                 "category": {"type": "text", "analyzer": "korean"},
                 "discount_content": {"type": "text", "analyzer": "korean"},
-                "longitude": {"type": "float"},
-                "latitude": {"type": "float"},
+                "location": {"type": "geo_point"},
                 "menus": {
                     "type": "nested",
                     "properties": {
@@ -88,18 +87,13 @@ for _, row in restaurant_df.iterrows():
     else:
         discount_content = None
 
-    if pd.notna(row['longitude']):
-        longitude = float(row['longitude'])
+    if pd.notna(row['longitude']) and pd.notna(row['latitude']):
+        location = {"lat": float(row['latitude']), "lon": float(row['longitude'])}
     else:
-        longitude = None
-
-    if pd.notna(row['latitude']):
-        latitude = float(row['latitude'])
-    else:
-        latitude = None
+        location = None
 
     print(row['name'], row['category'], row['review_count'], row['address'], rating, number, restaurant_image_url,
-          menus, longitude, latitude)
+          menus, location)
     data = {
         "id": row['id'],
         "name": row['name'],
@@ -111,8 +105,7 @@ for _, row in restaurant_df.iterrows():
         "image_url": restaurant_image_url,
         "category": row['custom_category'],
         "discount_content": discount_content,
-        "longitude": longitude,
-        "latitude": latitude,
+        "location": location,
         "menus": menus,
     }
     if data.get("discount_content") is None:
@@ -125,6 +118,8 @@ for _, row in restaurant_df.iterrows():
         data.pop("number")
     if data.get("image_url") is None:
         data.pop("image_url")
+    if data.get("location") is None:
+        data.pop("location")
 
     response = es.index(index=index_name, id=row['id'], document=data)
     print(f"Indexed document ID: {response['_id']}, Result: {response['result']}")
