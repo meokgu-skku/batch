@@ -1,5 +1,4 @@
 import json
-import os
 
 import openai
 import pymysql
@@ -80,12 +79,13 @@ def get_gpt_recommendations(user_data, restaurant_data):
 def save_recommendations_to_redis(user_id, recommendations):
   key = f"RECOMMENDATION:{user_id}"
   redis_client.delete(key)
-  for recommendation in recommendations.split('\n'):
-    redis_client.rpush(key, recommendation)
+  redis_client.set(key, recommendations)
   redis_client.expire(key, 3600 * 24 * 3)
 
+
 def save_all_restaurants_to_redis(filtered_restaurants):
-  all_restaurant_ids = [str(restaurant[0]) for restaurant in filtered_restaurants]
+  all_restaurant_ids = [str(restaurant[0]) for restaurant in
+                        filtered_restaurants]
   recommendations_string = ','.join(all_restaurant_ids)
   save_recommendations_to_redis(0, recommendations_string)
 
