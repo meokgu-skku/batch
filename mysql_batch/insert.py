@@ -13,13 +13,14 @@ def insert_into_restaurants(cursor, restaurant):
       `view_count`,
       `discount_content`,
       `longitude`,
-      `latitude`
+      `latitude`,
+      `naver_rating_avg`,
+      `naver_review_count`
     ) 
     VALUES (
-      %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
+      %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
     );
     """
-
   cursor.execute(insert_query, (
     restaurant['id'],
     restaurant['name'],
@@ -33,7 +34,9 @@ def insert_into_restaurants(cursor, restaurant):
     0,
     restaurant['discount_content'],
     restaurant['longitude'],
-    restaurant['latitude']
+    restaurant['latitude'],
+    0.0 if restaurant['rating'] == '' else float(restaurant['rating']),
+    int(restaurant['review_count'].replace('+', ''))
   ))
 
 

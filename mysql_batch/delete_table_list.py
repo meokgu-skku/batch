@@ -8,9 +8,6 @@ DELETE FROM `categories`;
 delete_table_restaurant_categories = """
 DELETE FROM `restaurant_categories`;
 """
-delete_table_operating_infos= """
-DELETE FROM `operating_infos`;
-"""
 delete_table_menus= """
 DELETE FROM `menus`;
 """
