@@ -1,7 +1,7 @@
 FROM python:3.8-slim
 
 COPY gpt-requirements.txt gpt-requirements.txt
-COPY gpt.py gpt.py
+COPY csv-to-gpt.py csv-to-gpt.py
 
 RUN pip install -r gpt-requirements.txt
 
