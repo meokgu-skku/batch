@@ -45,14 +45,6 @@ with open('../restaurants.csv', mode='r') as file:
 
 conn.commit()
 
-# Insert operating_infos
-with open('../operations.csv', mode='r') as file:
-  csv_dict = csv.DictReader(file)
-  for operation in csv_dict:
-    insert_into_operating_infos(cursor, operation)
-
-conn.commit()
-
 # Insert menus
 with open('../menus.csv', mode='r') as file:
   csv_dict = csv.DictReader(file)
